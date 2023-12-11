@@ -1,0 +1,10 @@
+{
+  "port": 80,
+  "jwtSecret": "card service site secret_jwt",
+  "baseUrl": "http://localhost",
+  "HOST_MYSQL": "localhost",
+  "USER_MYSQL": "root",
+  "PASSWORD_MYSQL": "Vanya-1251007",
+  "PORT_MYSQL": "3306",
+  "DATABASE_MYSQL": "card_service"
+}
