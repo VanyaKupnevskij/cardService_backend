@@ -36,7 +36,7 @@ class RecordService extends BaseService {
     item.unit_cost = itemData.unit_cost;
     item.meterials_cost = itemData.meterials_cost;
     item.energy_cost = itemData.energy_cost;
-    item.equipment_const = itemData.equipment_const;
+    item.equipment_cost = itemData.equipment_cost;
     item.amortization = itemData.amortization;
     item.marketing = itemData.marketing;
     item.labor_cost = itemData.labor_cost;
