@@ -68,78 +68,44 @@ class RecordService extends BaseService {
     }
   };
 
-  calculateBuisnesValues = (records) => {
-    let resultRecords = [...records];
-    const additionalInfo = {
-      year: {},
-      month: {},
-      day: {},
-    };
-
-    for (let record of resultRecords) {
-      const year = new Date(record.date).getFullYear();
-      const month = new Date(record.date).getMonth() + 1;
-      const day = new Date(record.date).getDate();
-
-      additionalInfo.year[year] = {
-        income: (additionalInfo.year[year]?.income || 0) + record.income,
-        costs: (additionalInfo.year[year]?.costs || 0) + record.costs,
-        already_paid: (additionalInfo.year[year]?.already_paid || 0) + record.already_paid,
-      };
-
-      additionalInfo.month[month] = {
-        income: (additionalInfo.month[month]?.income || 0) + record.income,
-        costs: (additionalInfo.month[month]?.costs || 0) + record.costs,
-        already_paid: (additionalInfo.month[month]?.already_paid || 0) + record.already_paid,
-      };
-
-      additionalInfo.day[day] = {
-        income: (additionalInfo.day[day]?.income || 0) + record.income,
-        costs: (additionalInfo.day[day]?.costs || 0) + record.costs,
-        already_paid: (additionalInfo.day[day]?.already_paid || 0) + record.already_paid,
-      };
-
-      for (const [keyYear, infoYear] of Object.entries(additionalInfo.year)) {
-        const { margin, marginality, profitability } = this.calculateRowBuisnesValue(
-          infoYear.income,
-          infoYear.costs,
-        );
-
-        additionalInfo.year[keyYear].margin = margin;
-        additionalInfo.year[keyYear].marginality = marginality;
-        additionalInfo.year[keyYear].profitability = profitability;
-      }
-      for (const [keyMonth, infoMonth] of Object.entries(additionalInfo.month)) {
-        const { margin, marginality, profitability } = this.calculateRowBuisnesValue(
-          infoMonth.income,
-          infoMonth.costs,
-        );
-
-        additionalInfo.month[keyMonth].margin = margin;
-        additionalInfo.month[keyMonth].marginality = marginality;
-        additionalInfo.month[keyMonth].profitability = profitability;
-      }
-      for (const [keyDay, infoDay] of Object.entries(additionalInfo.day)) {
-        const { margin, marginality, profitability } = this.calculateRowBuisnesValue(
-          infoDay.income,
-          infoDay.costs,
-        );
-
-        additionalInfo.day[keyDay].margin = margin;
-        additionalInfo.day[keyDay].marginality = marginality;
-        additionalInfo.day[keyDay].profitability = profitability;
-      }
+  calculate = async (inputData) => {
+    let input = {
+      year: inputData.year ?? new Date(Date.now()).getFullYear() + 1,
+      inflation: inputData.inflation ?? 0,
+      risk_politic: inputData.risk_politic ?? 0,
+      risk_inflation: inputData.risk_inflation ?? 0,
+      risk_concuration: inputData.risk_concuration ?? 0,
+      risk_contract: inputData.risk_contract ?? 0
     }
 
-    return { resultRecords, additionalInfo };
-  };
+    const lastYearData = await this.repository.getLastYear(input.year);
 
-  calculateRowBuisnesValue = (income, costs) => {
-    const margin = income - costs;
-    const marginality = (margin / income) * 100;
-    const profitability = (margin / income) * 100;
+    return this.calculate(input, lastYearData);
+  }
 
-    return { margin, marginality, profitability };
+  calculate = (input, lastYearData) => {
+    let calculatedResult = {
+      lastYear: {
+        proceeds: 0,
+        cost_price: 0,
+        income: 0,
+        operating_income: 0,
+        net_income: 0
+      },
+      selectYear: {
+        proceeds: 0,
+        cost_price: 0,
+        income: 0,
+        operating_income: 0,
+        net_income: 0
+      }
+    };
+
+    for (let record in lastYearData) {
+      
+    }
+
+    return calculatedResult;
   };
 }
 

@@ -7,6 +7,7 @@ const createQuery = loadQuery('records/create');
 const getAllQuery = loadQuery('records/getAll');
 const getQuery = loadQuery('records/get');
 const updateQuery = loadQuery('records/update');
+const getLastYear = loadQuery('records/getLastYear');
 
 class RecordRepository extends IRepository {
   constructor() {
@@ -64,6 +65,12 @@ class RecordRepository extends IRepository {
 
   async getAll() {
     const items = await connection.query(getAllQuery);
+
+    return items[0][1];
+  }
+  
+  async getLastYear() {
+    const items = await connection.query(getLastYear);
 
     return items[0][1];
   }
