@@ -78,12 +78,12 @@ class RecordService extends BaseService {
       risk_contract: inputData.risk_contract ?? 0
     }
 
-    const lastYearData = await this.repository.getLastYear(input.year);
+    const lastYearData = await this.repository.getLastYear();
 
-    return this.calculate(input, lastYearData);
+    return this.calculateValues(input, lastYearData);
   }
 
-  calculate = (input, lastYearData) => {
+  calculateValues = (input, lastYearData) => {
     let calculatedResult = {
       lastYear: {
         proceeds: 0,
@@ -100,10 +100,83 @@ class RecordService extends BaseService {
         net_income: 0
       }
     };
+    
+    let sumMaterialsCost = 0;
+    let sumEnergyCost = 0;
+    let sumEquipmentCost = 0;
+    let sumAmortization = 0;
+    let sumMarketing = 0;
+    let sumLaborCost = 0;
+    let sumTransportationCost = 0;
+    let sumInsurance = 0;
+    let sumTaxation = 0;
 
-    for (let record in lastYearData) {
-      
+    for (let record of lastYearData) {
+      calculatedResult.lastYear.proceeds += (+record.production_valumes ?? 0) * (+record.unit_price ?? 0);
+      calculatedResult.lastYear.cost_price += (+record.production_valumes ?? 0) * (+record.unit_cost ?? 0);
+      sumMaterialsCost += +record.meterials_cost ?? 0;
+      sumEnergyCost += +record.energy_cost ?? 0;
+      sumEquipmentCost += +record.equipment_cost ?? 0;
+      sumAmortization += +record.amortization ?? 0;
+      sumMarketing += +record.marketing ?? 0;
+      sumLaborCost += +record.labor_cost ?? 0;
+      sumTransportationCost += +record.transportation_cost ?? 0;
+      sumInsurance += +record.insurance ?? 0;
+      sumTaxation += +record.taxation ?? 0;
     }
+
+    calculatedResult.lastYear.income = 
+      calculatedResult.lastYear.proceeds - calculatedResult.lastYear.cost_price;
+    calculatedResult.lastYear.operating_income = 
+      calculatedResult.lastYear.income - sumMaterialsCost
+                                       - sumEnergyCost
+                                       - sumEquipmentCost
+                                       - sumAmortization
+                                       - sumMarketing
+                                       - sumLaborCost
+                                       - sumTransportationCost
+                                       - sumInsurance;
+    calculatedResult.lastYear.net_income = 
+      calculatedResult.lastYear.operating_income - sumTaxation;
+
+    // calculate for select year
+    calculatedResult.selectYear.proceeds = 
+      calculatedResult.lastYear.proceeds 
+            * (input.inflation / 100 + 1) 
+            * (1 - (input.risk_inflation / 10))
+            * (1 - (input.risk_concuration / 10))
+            * (1 - (input.risk_contract / 10));
+    
+      calculatedResult.selectYear.income = 
+      calculatedResult.lastYear.income 
+            * (input.inflation / 100 + 1) 
+            * (1 - (input.risk_inflation / 10))
+            * (1 - (input.risk_concuration / 10))
+            * (1 - (input.risk_contract / 10));
+    
+      calculatedResult.selectYear.cost_price = 
+        calculatedResult.lastYear.cost_price 
+              * (input.inflation / 100 + 1) 
+              * (1 - (input.risk_inflation / 10))
+              * (1 - (input.risk_concuration / 10))
+              * (1 - (input.risk_politic / 10))
+              * (1 - (input.risk_contract / 10));
+      
+      calculatedResult.selectYear.operating_income = 
+        calculatedResult.lastYear.operating_income 
+              * (input.inflation / 100 + 1) 
+              * (1 - (input.risk_inflation / 10))
+              * (1 - (input.risk_concuration / 10))
+              * (1 - (input.risk_politic / 10))
+              * (1 - (input.risk_contract / 10));
+      
+      calculatedResult.selectYear.net_income = 
+        calculatedResult.lastYear.net_income 
+              * (input.inflation / 100 + 1) 
+              * (1 - (input.risk_inflation / 10))
+              * (1 - (input.risk_concuration / 10))
+              * (1 - (input.risk_politic / 10))
+              * (1 - (input.risk_contract / 10));
 
     return calculatedResult;
   };
