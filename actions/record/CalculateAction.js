@@ -5,7 +5,7 @@ import RecordService from '../../services/RecordService.js';
 import RecordRepository from '../../repositories/RecordRepository.js';
 import AppError, { ERROR_PRESETS } from '../../errors/AppError.js';
 
-class CreateRecordAction extends IAction {
+class CalculateRecordAction extends IAction {
   constructor() {
     super();
 
@@ -51,4 +51,4 @@ class CreateRecordAction extends IAction {
   }
 }
 
-export default CreateRecordAction;
+export default CalculateRecordAction;
